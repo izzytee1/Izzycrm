@@ -148,8 +148,14 @@ function commContactActions(n, channel="text") {
 function commMessagesForLead(l, channel) { return COMM_DATA.messages.filter(m => LeadRules.byNumber(m.number)?.id === l.id && (!channel || m.channel===channel)); }
 function commCallsForLead(l) { return COMM_DATA.calls.filter(c => LeadRules.byNumber(c.number)?.id === l.id); }
 function receipt(m, service) {
-  if (m.dir !== "out" || service !== "imessage") return "";
-  return m.status === "read" ? '<span class="comm-receipt">Read</span>' : m.status === "delivered" ? '<span class="comm-receipt">Delivered</span>' : "";
+  if (m.dir !== "out") return "";
+  if (service === "wa") {
+    const ticks = m.status === "sent" ? "✓" : "✓✓";
+    return `<span class="wa-ticks${m.status === "read" ? " read" : ""}" title="${m.status === "read" && m.readAt ? "Read " + commFmtTime(m.readAt) : (m.status || "sent")}">${ticks}</span>`;
+  }
+  if (service !== "imessage") return "";
+  if (m.status === "read") return `<span class="comm-receipt">Read${m.readAt ? " " + commFmtTime(m.readAt) : ""}</span>`;
+  return m.status === "delivered" ? '<span class="comm-receipt">Delivered</span>' : "";
 }
 function threadHtml(l, channel) {
   const rows=commMessagesForLead(l,channel).sort((a,b)=>a.at-b.at);
@@ -179,6 +185,12 @@ function callListHtml(l) {
 }
 function renderComms() {
   const l=lead(), who=$("#dockWho"); if(who) who.textContent=l.name;
+  const msgBadge=$("#commMsgBadge"), callBadge=$("#commCallBadge"), emailBadge=$("#commEmailBadge");
+  const unread=COMM_DATA.messages.filter(m=>m.dir==="in"&&m.unread).length;
+  const missed=COMM_DATA.calls.filter(c=>c.dir==="missed"&&!c.seen).length;
+  if(msgBadge) msgBadge.textContent=unread||"";
+  if(callBadge) callBadge.textContent=missed||"";
+  if(emailBadge) emailBadge.textContent=typeof mail!=="undefined" ? (mail.unreadCount()||"") : "";
   if(!state.comm || state.comm==="sms") state.comm="all";
   document.querySelectorAll("#commTabs button").forEach(b=>b.classList.toggle("on",b.dataset.comm===state.comm));
   const composer=$("#composer");
@@ -186,7 +198,7 @@ function renderComms() {
   if(state.comm==="mail"){
     if(composer) composer.classList.add("hidden");
     commsEl.innerHTML=`<div class="comm-panel-head email-comm-head"><b>Email</b><span>${esc(l.name)}</span></div><div id="commEmailHost" class="comm-email-host"></div>`;
-    const host=document.getElementById("commEmailHost"); if(window.mail&&host) mail.mount(host,"compact");
+    const host=document.getElementById("commEmailHost"); if(typeof mail!=="undefined"&&host) mail.mount(host,"compact");
     return;
   }
   if(state.comm==="people"){ commsEl.innerHTML=`<div class="comm-panel-head"><b>Contacts</b><span>${esc(l.company)}</span></div><div class="comm-contacts">${(l.people||[]).map((p,i)=>{const n=(l.phones||[])[i]?.[2]||(l.phones||[])[0]?.[2]||"";return `<div class="comm-contact-card"><span class="av c${(Math.max(0,leads.findIndex(x=>x.id===l.id))%5)+1}">${esc(initials(p[1]))}</span><span class="comm-contact-main"><b>${esc(p[1])}</b><small>${esc(p[0])}</small><span class="num-detail">${esc(p[2]||commPhone(n))}</span></span>${n?commContactActions(n):""}</div>`;}).join("")||'<div class="comm-empty">No people yet.</div>'}</div>`; return; }
