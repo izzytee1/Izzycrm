@@ -4,10 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'index.html'
-      - 'css/**'
-      - 'js/**'
-      - 'mock-data/**'
+      - 'CRM.V40.EMAIL.MOBILE.REPAIRED.zip'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -28,20 +25,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Build multi-file site
+        run: |
+          rm -rf _site
+          mkdir _site
+          unzip -q CRM.V40.EMAIL.MOBILE.REPAIRED.zip -d _site
+          rm -f _site/CRM.V40.EMAIL.MOBILE.REPAIRED.SINGLE.html _site/quick-view.html
+          rm -rf _site/archives
       - uses: actions/configure-pages@v5
         with:
           enablement: true
-      - name: Build multi-file Pages site only
-        shell: bash
-        run: |
-          set -euo pipefail
-          rm -rf _site
-          mkdir -p _site
-          cp index.html _site/
-          cp -R css js mock-data _site/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: '_site'
+          path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
