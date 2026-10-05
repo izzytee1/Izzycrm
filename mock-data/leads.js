@@ -1,122 +1,53 @@
-const leads = [
-  {
-    id: "ns", revenue: "$186,000", amount: 186000, timestamp: "12m ago", age: 12, name: "Elena Voss", title: "Owner / CEO", company: "Northstar Catering Co.", dba: "Northstar",
-    city: "Manhattan, NY", stage: "In review", score: 78, fico: 672, ssn: "123-45-4412", biz: 81, star: true, mine: true, due: "Today 2:00 PM",
-    hue: 226, phones: [["Mobile", "(917) 555-0142"], ["Office", "(212) 555-0188"], ["Main", "(212) 555-0160"]],
-    emails: [["Work", "elena@northstarcatering.com"], ["Ops", "ops@northstarcatering.com"]],
-    entity: "NY S-Corp", ein: "82-4419441", industry: "Catering", opened: "2019", applied: "2026-09-12", employees: "34",
-    site: "northstarcatering.com", address: "412 W 37th St, New York, NY 10018", source: "ISO · Harbor Point",
-    deposits: "$186,420", balance: "$41,280", ask: "$150,000", offer: "$125,000", position: "2nd",
-    bankName: "Chase", account: "441944190812", routing: "021000021",
-    use: "LIC kitchen equipment + opening float", file: "FG-NS-1844", owner: "Cole Brennan",
-    notes: "Landlord deposit due Monday. Walk the term sheet at 2.",
-    statements: [["JAN", "$171,200", "$36,440"], ["FEB", "$179,880", "$39,120"], ["MAR", "$186,420", "$41,280"]],
-    people: [["Owner", "Elena Voss", "(917) 555-0142"], ["GM", "David Kim", "(917) 555-0194"], ["Bookkeeper", "Priya Nair", "(347) 555-0110"]],
-    sms: [
-      ["in", "Cole — Priya uploaded August last night. The $880 NSF was a Sysco double-draft, reversed same day.", "Thu 7:21 PM"],
-      ["out", "Got it. Numbers look clean. I’ll have a term sheet tomorrow.", "Thu 7:36 PM"],
-      ["in", "Any word? Landlord wants the remaining deposit Monday.", "Yesterday 5:02 PM"],
-      ["out", "Term sheet is in your inbox. $125k second position. Call you at 2 tomorrow to walk it.", "Yesterday 5:11 PM"]
-    ],
-    mail: [["out", "Term sheet · $125,000 second position.", "Yesterday 5:11 PM", "elena@northstarcatering.com"]],
-    calls: [["out", "Scheduled walkthrough", "Today 2:00 PM", "(917) 555-0142"], ["miss", "Missed call", "Thu 6:40 PM", "(917) 555-0142"]]
-  },
-  {
-    id: "hl", revenue: "$142,000", amount: 142000, timestamp: "28m ago", age: 28, name: "Marcus Chen", title: "Owner", company: "Harborline Logistics", dba: "Harborline",
-    city: "Newark, NJ", stage: "Qualified", ssn: "145-28-2281", ein: "22-1902190", opened: "2016", applied: "2026-09-18", industry: "Freight · 14 trucks",
-    address: "88 Ferry St, Newark, NJ 07105", source: "Referral · Sam Ortiz", deposits: "$138,400", balance: "$22,110", position: "1st",
-    bankName: "Bank of America", account: "902144018833", routing: "021200339", use: "Two used box trucks", file: "FG-HL-1902", owner: "Cole Brennan",
-    notes: "Wife Lina is on the operating account. Ask for both IDs.",
-    statements: [["JAN", "$129,600", "$18,440"], ["FEB", "$138,400", "$22,110"]],
-    phones: [["Mobile", "(862) 555-0190"], ["Office", "(973) 555-0144"]],
-    emails: [["Work", "marcus@harborlinelogistics.com"]],
-    people: [["Owner", "Marcus Chen", "(862) 555-0190"], ["Co-owner", "Lina Chen", "(862) 555-0191"]],
-    sms: [["out", "Got the January and February statements. Calling at 3:30.", "28m ago"]],
-    mail: [["in", "Opened the document request.", "28m ago", "marcus@harborlinelogistics.com"]],
-    calls: [["no", "No answer", "Today 11:10 AM", "(973) 555-0144"]]
-  },
-  {
-    id: "bd", revenue: "$221,000", amount: 221000, timestamp: "41m ago", age: 41, name: "Dr. Priya Shah", title: "Owner", company: "Brightwell Dental Group", dba: "Brightwell Dental",
-    city: "White Plains, NY", stage: "Approved", ssn: "062-77-7730", ein: "13-1760440", opened: "2014", applied: "2026-09-02", industry: "Dental · 3 chairs",
-    address: "14 Maple Ave, White Plains, NY 10601", source: "ISO · Northline", deposits: "$214,800", balance: "$60,340", position: "1st",
-    bankName: "Citibank", account: "176044019204", routing: "021000089", use: "Scanner and build-out", file: "FG-BD-1760", owner: "Sam Ortiz",
-    notes: "Approved at $160,000. Waiting on the landlord estoppel.",
-    statements: [["JAN", "$208,100", "$54,220"], ["FEB", "$211,400", "$57,900"], ["MAR", "$214,800", "$60,340"]],
-    phones: [["Mobile", "(914) 555-0104"], ["Office", "(914) 555-0177"]],
-    emails: [["Work", "priya@brightwelldental.com"]],
-    people: [["Owner", "Dr. Priya Shah", "(914) 555-0104"], ["Office manager", "Helen Cho", "(914) 555-0177"]],
-    sms: [["in", "August file is uploaded.", "41m ago"]],
-    mail: [["out", "Approval letter · $160,000.", "Today 9:15 AM", "priya@brightwelldental.com"]],
-    calls: [["out", "Reviewed the approval", "Today 9:40 AM", "(914) 555-0104"]]
-  },
-  {
-    id: "ro", revenue: "$97,000", amount: 97000, timestamp: "1h ago", age: 60, name: "Dominic Ruiz", title: "Owner", company: "Red Oak Auto Body", dba: "Red Oak",
-    city: "Queens, NY", stage: "Contacted", ssn: "091-18-1184", ein: "11-1881442", opened: "2012", applied: "2026-09-20", industry: "Auto body · 1 shop",
-    address: "41-18 Northern Blvd, Queens, NY 11101", source: "Web form", deposits: "$96,200", balance: "$8,440", position: "2nd",
-    bankName: "TD Bank", account: "188144209771", routing: "026013673", use: "Paint booth", file: "FG-RO-1881", owner: "Sam Ortiz",
-    notes: "February statement failed scan. Ask Dominic to resend it.",
-    statements: [["JAN", "$91,400", "$7,220"], ["MAR", "$96,200", "$8,440"]],
-    phones: [["Mobile", "(718) 555-0133"], ["Office", "(718) 555-0162"]],
-    emails: [["Work", "dominic@redoakautobody.com"]],
-    people: [["Owner", "Dominic Ruiz", "(718) 555-0133"]],
-    sms: [["out", "Need a clean February statement.", "1h ago"]],
-    mail: [["out", "Document request sent.", "1h ago", "dominic@redoakautobody.com"]],
-    calls: [["miss", "Missed call", "Today 11:00 AM", "(718) 555-0133"], ["no", "No answer", "Yesterday 4:12 PM", "(718) 555-0162"]]
-  },
-  {
-    id: "lu", revenue: "$84,000", amount: 84000, timestamp: "2h ago", age: 120, name: "Sable Whitaker", title: "Owner", company: "Lumen & Co. Interiors", dba: "Lumen",
-    city: "Brooklyn, NY", stage: "New", ssn: "134-65-6504", ein: "46-2011448", opened: "2021", applied: "2026-09-28", industry: "Interiors · studio",
-    address: "220 Franklin St, Brooklyn, NY 11222", source: "ISO · Harbor Point", deposits: "$79,200", balance: "$9,800", position: "1st",
-    bankName: "TD Bank", account: "201144880315", routing: "026013673", use: "Showroom inventory", file: "FG-LU-2011", owner: "Sam Ortiz",
-    notes: "March statement needs OCR. No mobile on the application.",
-    statements: [["FEB", "$74,600", "$8,120"], ["MAR", "$79,200", "$9,800"]],
-    phones: [["Office", "(718) 555-0166"]],
-    emails: [["Work", "sable@lumeninteriors.com"]],
-    people: [["Owner", "Sable Whitaker", "(718) 555-0166"]],
-    sms: [],
-    mail: [["out", "Intro and document list.", "2h ago", "sable@lumeninteriors.com"]],
-    calls: [["no", "No answer", "2h ago", "(718) 555-0166"]]
-  },
-  {
-    id: "mw", revenue: "$163,000", amount: 163000, timestamp: "3h ago", age: 180, name: "Tess Marlowe", title: "Owner", company: "Marlowe Wine Bar", dba: "Marlowe",
-    city: "New York, NY", stage: "In review", ssn: "078-33-3340", ein: "13-1664409", opened: "2018", applied: "2026-09-11", industry: "Bar · 1 location",
-    address: "18 Grove St, New York, NY 10014", source: "Walk-in", deposits: "$158,900", balance: "$27,450", position: "2nd",
-    bankName: "Chase", account: "166440912208", routing: "021000021", use: "Winter inventory", file: "FG-MW-1664", owner: "Cole Brennan",
-    notes: "SMS follow-up tomorrow at 9:30.",
-    statements: [["JAN", "$149,200", "$24,100"], ["FEB", "$158,900", "$27,450"]],
-    phones: [["Mobile", "(917) 555-0181"], ["Office", "(212) 555-0199"]],
-    emails: [["Work", "tess@marlowewinebar.com"]],
-    people: [["Owner", "Tess Marlowe", "(917) 555-0181"], ["Bar manager", "Owen Platt", "(917) 555-0182"]],
-    sms: [["out", "Sending the second-position outline tomorrow.", "3h ago"]],
-    mail: [["in", "Opened the outline.", "3h ago", "tess@marlowewinebar.com"]],
-    calls: [["out", "Confirmed tomorrow SMS", "3h ago", "(917) 555-0181"]]
-  },
-  {
-    id: "kp", revenue: "$205,000", amount: 205000, timestamp: "4h ago", age: 240, name: "Rahul Mehta", title: "Owner", company: "Keystone Pharmacy", dba: "Keystone",
-    city: "Jersey City, NJ", stage: "Funded", ssn: "151-90-9094", ein: "22-1540881", opened: "2011", applied: "2026-08-22", industry: "Pharmacy · 2 stores",
-    address: "510 Newark Ave, Jersey City, NJ 07306", source: "Renewal", deposits: "$205,600", balance: "$48,900", position: "1st",
-    bankName: "Valley Bank", account: "154088144902", routing: "021201383", use: "Inventory replenishment", file: "FG-KP-1540", owner: "Cole Brennan",
-    notes: "Funded last Thursday. First debit starts Monday.",
-    statements: [["JAN", "$198,400", "$44,200"], ["FEB", "$205,600", "$48,900"]],
-    phones: [["Mobile", "(201) 555-0148"], ["Office", "(201) 555-0170"]],
-    emails: [["Work", "rahul@keystonepharmacy.com"]],
-    people: [["Owner", "Rahul Mehta", "(201) 555-0148"], ["Bookkeeper", "Anita Desai", "(201) 555-0174"]],
-    sms: [["out", "Funding wired. Debit starts Monday.", "4h ago"]],
-    mail: [["out", "Funded confirmation · $150,000.", "4h ago", "rahul@keystonepharmacy.com"]],
-    calls: [["out", "Confirmed wire receipt", "4h ago", "(201) 555-0148"]]
-  },
-  {
-    id: "ap", revenue: "$118,000", amount: 118000, timestamp: "5h ago", age: 300, name: "Jonah Hale", title: "Owner", company: "Atlas Peak HVAC", dba: "Atlas Peak",
-    city: "Yonkers, NY", stage: "Contacted", ssn: "066-55-5528", ein: "14-1933440", opened: "2015", applied: "2026-09-25", industry: "HVAC · 8 techs",
-    address: "77 Main St, Yonkers, NY 10701", source: "ISO · Northline", deposits: "$117,300", balance: "$15,640", position: "1st",
-    bankName: "M&T Bank", account: "193344018660", routing: "022000046", use: "Two service vans", file: "FG-AP-1933", owner: "Sam Ortiz",
-    notes: "Follow-up set. Seasonal deposits dip in April.",
-    statements: [["JAN", "$121,800", "$16,200"], ["FEB", "$117,300", "$15,640"]],
-    phones: [["Mobile", "(914) 555-0120"], ["Office", "(914) 555-0155"]],
-    emails: [["Work", "jonah@atlaspeakhvac.com"]],
-    people: [["Owner", "Jonah Hale", "(914) 555-0120"]],
-    sms: [["out", "Can you send March tomorrow?", "5h ago"]],
-    mail: [["out", "Application received.", "5h ago", "jonah@atlaspeakhvac.com"]],
-    calls: [["miss", "Missed call", "5h ago", "(914) 555-0120"]]
-  }
+// TOPBAR Leads content ported into V40.
+// Mock/demo content only. V40 remains the visual source of truth.
+const rawTopbarLeads = [
+  {id:1,company:"Apex Dynamics",legal:"Apex Dynamics Holdings LLC",dba:"",ein:"84-2917336",industry:"Industrial Automation",started:"2014-03-12",address:"1450 Mission St, San Francisco, CA 94103",address2:"88 King St, Unit 4, San Francisco, CA 94107",applied:"2026-09-02",first:"Sandra",last:"Reeves",dob:"1981-06-04",ssn:"901-44-8830",status:"ENGAGED",rep:"Marcus",stage:"negotiation",value:240000,prob:68,closeDate:"Sep 30, 2026",lastActive:60,phones:[["mobile","4153097723"],["mobile","4155550148"],["landline","4158824401"],["landline","4155550112"]],emails:["s.reeves@apexdyn.com","assistant@apexdyn.com","sandra.reeves@outlook.com"],bank:{name:"Chase",account:"483920117765",deposits:412000,balance:186000,obligations:21500,nsf:0,months:6,mtd:{day:22,balance:191400}},notes:"Interested in enterprise tier. Mentioned rollout timeline pressure — wants contract signed before Q4 budget freeze. Follow up on security questionnaire.",history:[["email","Demo invite sent","Zoom link for today at 4:00 PM","Today"],["call","Discovery call — 38 min","Discussed pain points, budget confirmed $200–260K","Aug 19"],["email","Proposal sent — v2","Updated pricing, added 120-seat tier","Aug 18"],["meet","Stakeholder intro · Apex IT team","Met CTO and IT Director, good reception","Aug 12"]]},
+  {id:2,company:"Meridian Capital",legal:"Meridian Capital Partners LP",dba:"Meridian Capital",ein:"13-4408215",industry:"Financial Services",started:"2009-09-01",address:"375 Park Ave, Fl 12, New York, NY 10152",applied:"2026-08-27",first:"James",last:"Liao",dob:"1976-02-19",ssn:"912-30-5561",status:"ATTEMPTED",rep:"Sam",stage:"proposal",value:185000,prob:55,closeDate:"Oct 15, 2026",lastActive:25,phones:[["mobile","2125549031"],["landline","2125548820"],["landline","2125550176"]],emails:["j.liao@meridian.com","finance@meridian.com","jliao.personal@gmail.com"],bank:{name:"Bank of America",account:"004471829356",deposits:268000,balance:94000,obligations:82000,nsf:2,months:6,mtd:{day:21,balance:88700}},notes:"CFO wants two payment options. Prefers a call over email.",history:[["call","Pricing call — 22 min","Asked about 24-month terms","Today"],["email","Proposal sent","Includes two payment options","Sep 22"]]},
+  {id:3,company:"Nova Logistics",legal:"Nova Logistics Inc.",dba:"",ein:"36-4791052",industry:"Freight & Logistics",started:"2017-05-22",address:"2201 W Fulton St, Chicago, IL 60612",address2:"1800 S Canal St, Chicago, IL 60616",address3:"4400 W 45th St, Chicago, IL 60632",applied:"2026-09-10",first:"Priya",last:"Tandon",dob:"1988-11-30",ssn:"923-18-2204",status:"NEW",rep:"Mike",stage:"qualified",value:120000,prob:40,closeDate:"Oct 22, 2026",lastActive:190,phones:[["mobile","3127792241"],["mobile","3125550133"]],emails:["p.tandon@novalog.io","ops@novalog.io"],bank:{name:"Wells Fargo",account:"7730218845",deposits:175000,balance:52000,obligations:18000,nsf:0,months:4},notes:"Wants a demo for her engineering team before deciding.",history:[["meet","Tech review call","Met her engineering lead","Today"],["email","Intro email","Sent overview deck","Sep 18"]]},
+  {id:4,company:"Evergreen Tech",legal:"Evergreen Technology Group LLC",dba:"",ein:"93-1886420",industry:"IT Services",started:"2019-01-15",address:"910 NW Glisan St, Portland, OR 97209",applied:"2026-09-14",first:"Ben",last:"Kowalski",dob:"1984-07-08",ssn:"934-52-7719",status:"ATTEMPTED",rep:"Sarah",stage:"discovery",value:95000,prob:25,closeDate:"Nov 5, 2026",lastActive:1440,phones:[["mobile","5035550187"],["landline","5036614490"]],emails:["b.kowalski@evg.tech"],bank:{name:"U.S. Bank",account:"153600927418",deposits:132000,balance:31000,obligations:44000,nsf:3,months:3},notes:"Needs finance approval before moving forward.",history:[["call","Discovery call — 15 min","Needs approval from finance","Yesterday"],["email","First outreach","No reply yet","Sep 17"]]},
+  {id:5,company:"Stellar Ops",legal:"Stellar Operations Corp.",dba:"Stellar Ops",ein:"77-0529184",industry:"Managed IT",started:"2012-08-03",address:"3000 N First St, San Jose, CA 95134",address2:"47 E Santa Clara St, San Jose, CA 95113",applied:"2026-08-19",first:"Mei",last:"Chen",dob:"1983-04-25",ssn:"945-66-1038",status:"CONTRACT",rep:"Marcus",stage:"negotiation",value:310000,prob:75,closeDate:"Sep 25, 2026",lastActive:12,phones:[["mobile","4082291170"],["mobile","4085550119"],["landline","4082298832"],["landline","4085550164"]],emails:["m.chen@stellarops.com","itdesk@stellarops.com","billing@stellarops.com"],bank:{name:"Chase",account:"902215734061",deposits:455000,balance:210000,obligations:38000,nsf:0,months:6,mtd:{day:23,balance:224800}},notes:"Asked for a volume discount on a 3-year term.",history:[["call","Pricing review — 41 min","Asked for a volume discount","Today"],["email","Revised quote","Added 3-year option","Sep 23"],["meet","Contract walkthrough","Legal joined the call","Sep 21"]]},
+  {id:6,company:"QuantumBridge",legal:"QuantumBridge Technologies Inc.",dba:"",ein:"82-3310457",industry:"Software",started:"2021-02-10",address:"120 W 45th St, New York, NY 10036",applied:"2026-09-18",first:"David",last:"Ruiz",dob:"1979-12-14",ssn:"956-07-3342",status:"ENGAGED",rep:"Sam",stage:"prospecting",value:450000,prob:15,closeDate:"Nov 30, 2026",lastActive:4320,phones:[["mobile","6465550191"],["landline","6463371122"]],emails:["d.ruiz@qbridge.ai","assistant@qbridge.ai"],bank:{name:"Citibank",account:"4988103276",deposits:620000,balance:305000,obligations:96000,nsf:0,months:2},notes:"Early stage. Reach the CEO through his assistant.",history:[["email","Intro email","Opened twice, no reply","Sep 21"]]},
+  {id:7,company:"Pinnacle Health",legal:"Pinnacle Health Partners PLLC",dba:"Pinnacle Health",ein:"04-3620198",industry:"Healthcare",started:"2008-06-30",address:"800 Boylston St, Boston, MA 02199",applied:"2026-07-28",first:"Alicia",last:"Hayes",dob:"1974-09-02",ssn:"967-21-6605",status:"IGNORE",rep:"Mike",stage:"closed-won",value:175000,prob:100,closeDate:"Aug 15, 2026",lastActive:10080,phones:[["mobile","6175550127"],["landline","6174920033"]],emails:["a.hayes@pinnaclehlth.com","operations@pinnaclehlth.com"],bank:{name:"TD Bank",account:"8246619037",deposits:240000,balance:118000,obligations:15000,nsf:0,months:6},notes:"Signed. Onboarding starts next week.",history:[["call","Kickoff call — 30 min","Onboarding scheduled","Sep 17"],["email","Contract signed","Signed by both sides","Aug 15"]]},
+  {id:8,company:"SyncWave",legal:"SyncWave Networks LLC",dba:"",ein:"75-2984413",industry:"Telecommunications",started:"2016-10-11",address:"2100 Ross Ave, Dallas, TX 75201",applied:"2026-09-05",first:"Thomas",last:"Patel",dob:"1985-03-17",ssn:"978-39-4471",status:"NEW",rep:"Sarah",stage:"proposal",value:205000,prob:55,closeDate:"Oct 10, 2026",lastActive:90,phones:[["mobile","2145550138"],["mobile","2145550156"],["landline","2148835560"]],emails:["t.patel@syncwave.io","ops@syncwave.io"],bank:{name:"Capital One",account:"3610457729",deposits:290000,balance:87000,obligations:52000,nsf:1,months:5,mtd:{day:20,balance:79300}},notes:"Focused on how fast the setup can be done.",history:[["email","Proposal follow-up","Asked about implementation time","Today"],["meet","Proposal review","Walked through pricing","Sep 20"]]},
+  {id:9,company:"Orbis Analytics",legal:"Orbis Analytics Co.",dba:"",ein:"84-4129067",industry:"Data & Analytics",started:"2020-04-06",address:"1601 Wewatta St, Denver, CO 80202",applied:"2026-09-16",first:"Laura",last:"Fischer",dob:"1990-01-23",ssn:"989-12-5503",status:"ATTEMPTED",rep:"Marcus",stage:"discovery",value:88000,prob:25,closeDate:"Nov 18, 2026",lastActive:2880,phones:[["landline","7204419987"]],emails:["l.fischer@orbis.co"],bank:{name:"Wells Fargo",account:"6602934418",deposits:118000,balance:26000,obligations:39000,nsf:4,months:3},notes:"Asked for a case study from a similar company.",history:[["email","Intro email","Asked for a case study","Sep 22"]]},
+  {id:10,company:"Vertex Systems",legal:"Vertex Systems Inc.",dba:"",ein:"94-3371820",industry:"Enterprise Software",started:"2011-11-01",address:"555 California St, San Francisco, CA 94104",applied:"2026-09-08",first:"Nathan",last:"Kim",dob:"1982-08-12",ssn:"990-47-2286",status:"NEW",rep:"Sam",stage:"qualified",value:142000,prob:45,closeDate:"Oct 28, 2026",lastActive:300,phones:[["mobile","4155550170"],["landline","4156673345"]],emails:["n.kim@vertexsys.com","it@vertexsys.com"],bank:{name:"Silicon Valley Bank",account:"3300781526",deposits:205000,balance:71000,obligations:28000,nsf:0,months:6},notes:"Wants to test the integration first.",history:[["call","Technical review — 27 min","Wants an integration test","Today"],["email","Security questions","Sent the security summary","Sep 19"]]},
+  {id:11,company:"ClearPath Fin.",legal:"ClearPath Financial LLC",dba:"ClearPath Funding",ein:"36-5520913",industry:"Lending",started:"2015-07-20",address:"233 S Wacker Dr, Chicago, IL 60606",applied:"2026-08-11",first:"Olivia",last:"Brooks",dob:"1987-05-09",ssn:"901-83-9914",status:"ATTEMPTED",rep:"Mike",stage:"closed-lost",value:98000,prob:0,closeDate:"—",lastActive:20160,phones:[["landline","3125587712"]],emails:["o.brooks@clearpath.com"],bank:{name:"PNC Bank",account:"5093378214",deposits:98000,balance:12000,obligations:47000,nsf:6,months:4},notes:"Chose another vendor on price. Try again in Q1.",history:[["call","Closing call","Went with another vendor","Sep 10"],["note","Lost — price","Try again in Q1","Sep 10"]]},
+  {id:12,company:"Horizon Cloud",legal:"Horizon Cloud Security Inc.",dba:"",ein:"74-3098152",industry:"Cybersecurity",started:"2013-01-28",address:"600 Congress Ave, Austin, TX 78701",address2:"11501 Alterra Pkwy, Austin, TX 78758",applied:"2026-08-30",first:"Rafael",last:"Gomez",dob:"1980-10-31",ssn:"912-75-0428",status:"ENGAGED",rep:"Sarah",stage:"negotiation",value:330000,prob:70,closeDate:"Sep 28, 2026",lastActive:45,phones:[["mobile","5128824177"],["mobile","5125550162"],["landline","5128824100"],["landline","5125550109"]],emails:["r.gomez@horizoncloud.io","security@horizoncloud.io","rafael.gomez@outlook.com"],bank:{name:"Frost Bank",account:"271094463850",deposits:470000,balance:198000,obligations:44000,nsf:0,months:6,mtd:{day:22,balance:203600}},notes:"Needs SOC2 report and a pen test summary.",history:[["call","Security review — 35 min","Wants a pen test summary","Today"],["email","Security package sent","SOC2 report attached","Sep 22"]]}
 ];
+
+function leadMoney(value) { return Number.isFinite(Number(value)) ? "$" + Math.round(Number(value)).toLocaleString("en-US") : ""; }
+function leadPhone(value) {
+  const d = String(value || "").replace(/\D/g, "");
+  return d.length === 10 ? `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}` : String(value || "");
+}
+function leadAgo(minutes) {
+  const n = Number(minutes);
+  if (!Number.isFinite(n)) return "";
+  if (n < 60) return `${n}m ago`;
+  if (n < 1440) return `${Math.floor(n / 60)}h ago`;
+  return `${Math.floor(n / 1440)}d ago`;
+}
+
+const leads = rawTopbarLeads.map((l) => ({
+  ...l,
+  id: String(l.id),
+  name: [l.first, l.last].filter(Boolean).join(" "),
+  title: "Owner",
+  revenue: leadMoney(l.value),
+  amount: l.value,
+  timestamp: leadAgo(l.lastActive),
+  city: String(l.address || "").split(",").slice(-2).join(",").trim(),
+  owner: l.rep || "",
+  bankName: l.bank?.name || "",
+  account: l.bank?.account || "",
+  deposits: leadMoney(l.bank?.deposits),
+  balance: leadMoney(l.bank?.balance),
+  opened: l.started || "",
+  phones: (l.phones || []).map((p) => [p[0] === "mobile" ? "Mobile" : "Landline", leadPhone(p[1]), p[1]]),
+  emails: (l.emails || []).map((e) => ["Email", e]),
+  people: [["Owner", [l.first, l.last].filter(Boolean).join(" "), leadPhone((l.phones || [])[0]?.[1] || "")]],
+  sms: [],
+  mail: [],
+  calls: [],
+  history: (l.history || []).map((h) => ({type:h[0],subject:h[1],preview:h[2],date:h[3]}))
+}));
