@@ -67,27 +67,28 @@ function renderDetail() {
           <div class="detail-contact">${phoneFacts}${emailFacts || (!phoneFacts ? `<div class="detail-empty">No direct contacts on file.</div>` : "")}</div>
         </section>
       </div>
-      <div class="detail-pair">
-        <section class="detail-section">
-          <div class="detail-title">${detailIcon("M3 10h18M5 10V7l7-4 7 4v3M5 10v9M9 10v9M15 10v9M19 10v9M3 19h18")}<span>Banking &amp; Cash Flow</span></div>
-          <div class="detail-facts">${bankFacts}</div>
-          ${bankRows ? `<table class="stmt-table"><thead><tr><th>Month</th><th>Deposits</th><th>Balance</th></tr></thead><tbody>${bankRows}</tbody></table>` : `<div class="detail-empty" style="margin-top:12px">No bank statements on file.</div>`}
-        </section>
-        <section class="detail-section">
-          <div class="detail-title">${detailIcon("M12 8v4l3 2M21 12a9 9 0 1 1-9-9")}<span>Activity Stream</span></div>
-          <div class="activity-list">${activity.length ? activity.map(a => `<div class="activity-item"><div class="activity-time">${esc(a[2] || "")}</div><div class="activity-text">${esc(a[1] || "")}</div></div>`).join("") : `<div class="detail-empty">No activity yet.</div>`}</div>
-        </section>
-      </div>
-           <div class="detail-pair">
-      <section class="detail-section">
+      <section class="detail-section detail-full banking-section">
+        <div class="detail-title">${detailIcon("M3 10h18M5 10V7l7-4 7 4v3M5 10v9M9 10v9M15 10v9M19 10v9M3 19h18")}<span>Banking &amp; Cash Flow</span></div>
+        <div class="detail-facts bank-facts">${bankFacts}</div>
+        ${bankRows ? `<table class="stmt-table"><thead><tr><th>Month</th><th>Deposits</th><th>Balance</th></tr></thead><tbody>${bankRows}</tbody></table>` : `<div class="detail-empty" style="margin-top:12px">No bank statements on file.</div>`}
+      </section>
+      <section class="detail-section detail-full">
         <div class="detail-title">${detailIcon("M4 19V9M10 19V5M16 19v-7M22 19V3")}<span>Executive Summary</span></div>
         <p class="summary">${esc(summaryParts.join(" ") || "No financial summary available yet.")}</p>
       </section>
-      <section class="detail-section">
-        <div class="detail-title">${detailIcon("M4 4h16v16H4zM8 9h8M8 13h8M8 17h5")}<span>Notes & Directives</span></div>
-        <textarea class="notes-area" data-note-id="${esc(l.id)}" placeholder="Add a note…">${esc(l.notes || "")}</textarea>
+      <section class="detail-section detail-full">
+        <div class="detail-title">${detailIcon("M12 8v4l3 2M21 12a9 9 0 1 1-9-9")}<span>Activity Stream</span></div>
+        <div class="activity-list">${activity.length ? activity.map(a => `<div class="activity-item"><div class="activity-time">${esc(a[2] || "")}</div><div class="activity-text">${esc(a[1] || "")}</div></div>`).join("") : `<div class="detail-empty">No activity yet.</div>`}</div>
       </section>
-      </div>
+      <section class="detail-section detail-full notes-section">
+        <button class="detail-title notes-toggle" type="button" aria-expanded="false">
+          ${detailIcon("M4 4h16v16H4zM8 9h8M8 13h8M8 17h5")}<span>Notes &amp; Directives</span><span class="notes-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="notes-content" hidden>
+          <textarea class="notes-area" data-note-id="${esc(l.id)}" placeholder="Add a note…">${esc(l.notes || "")}</textarea>
+          <div class="notes-actions"><button class="btn notes-save" type="button" data-note-id="${esc(l.id)}">Save</button></div>
+        </div>
+      </section>
     </div>
   </div>`;
 }
@@ -114,11 +115,23 @@ function renderComms() {
 function render() { renderList(); renderDetail(); renderComms(); }
 
 
-document.addEventListener("input", (e) => {
-  if (e.target.matches(".notes-area")) { const l = leads.find(x => x.id === e.target.dataset.noteId); if (l) l.notes = e.target.value; }
-});
-
 document.addEventListener("click", (e) => {
+  const notesToggle = e.target.closest(".notes-toggle");
+  if (notesToggle) {
+    const content = notesToggle.parentElement.querySelector(".notes-content");
+    const opening = content.hidden;
+    content.hidden = !opening;
+    notesToggle.setAttribute("aria-expanded", String(opening));
+    return;
+  }
+  const notesSave = e.target.closest(".notes-save");
+  if (notesSave) {
+    const area = notesSave.closest(".notes-content").querySelector(".notes-area");
+    const l = leads.find(x => x.id === notesSave.dataset.noteId);
+    if (l) l.notes = area.value;
+    toast("Notes saved");
+    return;
+  }
   const row = e.target.closest(".lead-row");
   if (row) { state.id = row.dataset.id; render(); return; }
   const comm = e.target.closest("[data-comm]");
