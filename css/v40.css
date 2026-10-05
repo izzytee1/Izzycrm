@@ -550,3 +550,16 @@ svg { display: block; }
 .msg-bubble{padding:7px 10px;border-radius:16px;font-size:12px;line-height:1.35;overflow-wrap:anywhere}.msg-line.in .msg-bubble{background:#E9EAEC;color:#2F3941;border-bottom-left-radius:5px}.msg-line.out .msg-bubble.imessage{background:#0A84FF;color:#fff;border-bottom-right-radius:5px}.msg-line.out .msg-bubble.sms{background:#34C759;color:#fff;border-bottom-right-radius:5px}
 .wa-chat .msg-bubble{border-radius:8px}.wa-chat .msg-line.in .msg-bubble{background:#fff;color:#2F3941;border-bottom-left-radius:2px}.wa-chat .msg-line.out .msg-bubble.wa{background:#D9FDD3;color:#26313A;border-bottom-right-radius:2px}
 .msg-meta{font-size:8.5px;color:#A0A7AD;margin:2px 4px 4px}.comm-receipt{margin-left:4px}.wa-chat .comm-receipt{color:#53A7D8}
+
+/* Phase 3 completion: V40/TOPBAR communication sizing and typography */
+.dock,.dock button,.dock textarea{font-family:"IBM Plex Sans",Arial,sans-serif}
+.dock .num-detail,.dock .comm-row-time,.dock .msg-meta,.dock .time-bit{font-family:var(--detail-mono)}
+.comm-lead-av{width:34px;height:34px;min-width:34px;font-size:10px}
+.comm-thread-head{min-height:56px;padding:7px 10px}
+.comm-thread-head>.av{margin-left:1px}.comm-thread-who{min-width:0;flex:1}.comm-thread-who b{font-size:12px}.comm-thread-who span{font-size:9px}
+.comm-actions{display:flex;align-items:center;gap:3px;margin-left:auto}.comm-actions button{width:27px;height:27px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#65717A;font-size:11px;display:grid;place-items:center}
+.comm-actions button:hover{background:#F5F7F8}
+.comm-contacts{display:flex;flex-direction:column}.comm-contact-card{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:9px;align-items:center;padding:10px 12px;border-bottom:1px solid #ECEFF1}
+.comm-contact-main{min-width:0;display:flex;flex-direction:column;gap:1px}.comm-contact-main b{font-size:12px;font-weight:500;color:#36414A}.comm-contact-main small{font-size:9px;color:#929AA1}.comm-contact-main>span{font-size:10px;color:#66717A}
+.comm-email-host{height:calc(100% - 48px);min-height:0;overflow:hidden}.comm-email-host .email-app{height:100%;min-height:0}
+.email-comm-head{font-family:"IBM Plex Sans",Arial,sans-serif}
