@@ -72,7 +72,9 @@ function renderDetail() {
   const l = lead();
   const phoneFacts = (l.phones || []).map((p) => `<div class="detail-fact"><div class="detail-label">${esc(p[0] || "Phone")}</div><a class="detail-value num-detail" href="tel:${esc(String(p[2] || p[1]).replace(/[^\\d+]/g, ""))}">${esc(p[1])}</a></div>`).join("");
   const emailFacts = (l.emails || []).map((e) => `<div class="detail-fact"><div class="detail-label">Email</div><a class="detail-value" style="font-weight:400" href="mailto:${esc(e[1])}">${esc(e[1])}</a></div>`).join("");
-  const activity = (l.history || []).slice(0, 4).map((h) => ["", h.subject + (h.preview ? " — " + h.preview : ""), h.date]);
+  const liveActivity = LeadRules.history(l.id).map((h) => ["", h.text, new Date(h.at).toLocaleString([], { month:"short", day:"numeric", hour:"numeric", minute:"2-digit" })]);
+  const seedActivity = (l.history || []).map((h) => ["", h.subject + (h.preview ? " — " + h.preview : ""), h.date]);
+  const activity = liveActivity.concat(seedActivity).slice(0, 4);
   const bankRows = statementRows(l).map(r => `<tr><td>${esc(r[0])}</td><td class="num-detail">${esc(r[1])}</td><td class="num-detail">${esc(r[2])}</td></tr>`).join("");
   const profile = [
     l.dba ? detailFact("DBA", l.dba) : "",
@@ -166,12 +168,10 @@ document.addEventListener("click", (e) => {
   if (notesSave) {
     const area = notesSave.closest(".notes-content").querySelector(".notes-area");
     const l = leads.find(x => x.id === notesSave.dataset.noteId);
-    if (l) l.notes = area.value;
-    toast("Notes saved");
+    if (l) { l.notes = area.value; LeadRules.update(l.id, { notes: area.value }); LeadRules.log(l.id, "note", "Notes updated"); }\n    toast("Notes saved");
     return;
   }
-  const row = e.target.closest(".lead-row");
-  if (row) { state.id = row.dataset.id; render(); return; }
+  const row = e.target.closest(".lead-row");\n  if (row) { LeadRules.select(row.dataset.id); render(); return; }
   const comm = e.target.closest("[data-comm]");
   if (comm) { state.comm = comm.dataset.comm; renderComms(); return; }
   if (e.target.closest("#attachBtn")) { $("#file").click(); return; }
@@ -187,6 +187,10 @@ $("#composer").addEventListener("submit", (e) => {
   const key = state.comm === "mail" ? "mail" : state.comm === "calls" ? "calls" : state.comm === "people" ? "calls" : "sms";
   if (state.comm === "people") l.calls.push(["out", body, nowLabel()]);
   else l[key].push(["out", body, nowLabel()]);
+  const ruleKind = state.comm === "mail" ? "email" : state.comm === "calls" || state.comm === "people" ? "call" : "sms";
+  const target = LeadRules.target(ruleKind, l);
+  if (target) LeadRules.perform(ruleKind, l.id, target);
+  else LeadRules.log(l.id, ruleKind, body);
   $("#box").value = "";
   state.fileName = "";
   $("#file").value = "";
