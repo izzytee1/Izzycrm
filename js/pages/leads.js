@@ -208,10 +208,12 @@ document.addEventListener("click", (e) => {
   if (notesSave) {
     const area = notesSave.closest(".notes-content").querySelector(".notes-area");
     const l = leads.find(x => x.id === notesSave.dataset.noteId);
-    if (l) { l.notes = area.value; LeadRules.update(l.id, { notes: area.value }); LeadRules.log(l.id, "note", "Notes updated"); }\n    toast("Notes saved");
+    if (l) { l.notes = area.value; LeadRules.update(l.id, { notes: area.value }); LeadRules.log(l.id, "note", "Notes updated"); }
+    toast("Notes saved");
     return;
   }
-  const row = e.target.closest(".lead-row");\n  if (row) { LeadRules.select(row.dataset.id); render(); return; }
+  const row = e.target.closest(".lead-row");
+  if (row) { LeadRules.select(row.dataset.id); render(); return; }
   const comm = e.target.closest("[data-comm]");
   if (comm) { state.comm=comm.dataset.comm; state.threadNumber=""; renderComms(); return; }
   const channelBtn=e.target.closest("[data-msg-channel]");
@@ -234,7 +236,8 @@ $("#composer").addEventListener("submit", (e) => {
   else l[key].push(["out", body, nowLabel()]);
   const ruleKind = state.comm === "mail" ? "email" : state.comm === "calls" || state.comm === "people" ? "call" : (state.messageChannel === "wa" ? "wa" : "sms");
   const target = LeadRules.target(ruleKind, l);
-  if (state.comm === "messages" && state.threadNumber && text) { COMM_DATA.messages.push({id:"cm"+Date.now(),channel:state.messageChannel||"text",number:state.threadNumber,dir:"out",text,at:Date.now(),phone:1,unread:false,status:"sent"}); }\n  if (target) LeadRules.perform(ruleKind, l.id, target);
+  if (state.comm === "messages" && state.threadNumber && text) { COMM_DATA.messages.push({id:"cm"+Date.now(),channel:state.messageChannel||"text",number:state.threadNumber,dir:"out",text,at:Date.now(),phone:1,unread:false,status:"sent"}); }
+  if (target) LeadRules.perform(ruleKind, l.id, target);
   else LeadRules.log(l.id, ruleKind, body);
   $("#box").value = "";
   state.fileName = "";
