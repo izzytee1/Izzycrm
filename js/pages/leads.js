@@ -92,7 +92,7 @@ function renderDetail() {
   $("#desk").innerHTML = `<div class="detail-shell">
     <div class="detail-head">
       <div class="detail-name">${esc(l.legal || l.company)}</div>
-      <div class="detail-sub"><span>${esc(l.name)}</span><span>${esc(l.stage || "")}</span><svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>${l.address ? `<span>${esc(l.address)}</span>` : `<span>${esc(l.city || "")}</span>`}</div>
+      <div class="detail-sub"><span>${esc(l.name)}</span><svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>${l.address ? `<span>${esc(l.address)}</span>` : `<span>${esc(l.city || "")}</span>`}</div>
     </div>
     <div class="detail-body">
       <div class="detail-pair profile-pair">
