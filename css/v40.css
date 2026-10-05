@@ -173,7 +173,7 @@ svg { display: block; }
 }
 .lead-row .av { grid-row: 1 / span 2; }
 .lead-row:hover { background: var(--sunken); }
-.lead-row.on { background: #E4E0D6; box-shadow: inset 3px 0 0 #1C1F24; }
+.lead-row.on { background: #F1EFEA; box-shadow: inset 3px 0 0 #1C1F24; }
 .detail-contact a { color: #36414A; text-decoration: none; }
 .detail-contact a:hover { text-decoration: underline; }
 .bubble.miss { background: #F8F1E7; }
