@@ -65,7 +65,8 @@ function boot() {
   bindCampaignPage();
   bindPages();
   bindNavigation();
-  syncRoute();
+  if (location.hash !== "#leads") history.replaceState(null, "", location.pathname + location.search + "#leads");
+  setView("leads");
 }
 
 boot();
