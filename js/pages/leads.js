@@ -190,11 +190,16 @@ function renderComms() {
     return;
   }
   if(state.comm==="people"){ commsEl.innerHTML=`<div class="comm-panel-head"><b>Contacts</b><span>${esc(l.company)}</span></div><div class="comm-contacts">${(l.people||[]).map((p,i)=>{const n=(l.phones||[])[i]?.[2]||(l.phones||[])[0]?.[2]||"";return `<div class="comm-contact-card"><span class="av c${(Math.max(0,leads.findIndex(x=>x.id===l.id))%5)+1}">${esc(initials(p[1]))}</span><span class="comm-contact-main"><b>${esc(p[1])}</b><small>${esc(p[0])}</small><span class="num-detail">${esc(p[2]||commPhone(n))}</span></span>${n?commContactActions(n):""}</div>`;}).join("")||'<div class="comm-empty">No people yet.</div>'}</div>`; return; }
-  if(state.comm==="calls"){ commsEl.innerHTML=`<div class="comm-panel-head"><b>Calls</b><span>${esc(l.name)}</span></div>${callListHtml(l)}`; return; }
+  if(state.comm==="calls"){
+    COMM_DATA.calls.filter(c=>LeadRules.byNumber(c.number)?.id===l.id).forEach(c=>c.seen=true);
+    const filter=state.callFilter||"all"; const old=commCallsForLead(l), filtered=filter==="missed"?old.filter(c=>c.dir==="missed"):old;
+    commsEl.innerHTML=`<div class="comm-panel-head"><b>Calls</b><span>${esc(l.name)}</span></div><div class="comm-channel-switch call-switch"><button type="button" data-call-filter="all" class="${filter==="all"?"on":""}">All</button><button type="button" data-call-filter="missed" class="${filter==="missed"?"on":""}">Missed</button></div>${filtered.length?'<div class="comm-list">'+filtered.sort((a,b)=>b.at-a.at).map(c=>`<div class="comm-row call-row"><span class="comm-call-icon ${c.dir}">${c.dir==="out"?"↗":"↙"}</span><span class="comm-row-main"><b>${esc(commName(c.number))}</b><small>${c.dir==="missed"?"Missed":c.dir==="out"?"Outgoing":"Incoming"} · Phone ${c.phone}</small><span class="num-detail">${esc(commPhone(c.number))}${c.seconds?" · "+Math.floor(c.seconds/60)+":"+String(c.seconds%60).padStart(2,"0"):" · no answer"}</span></span><span class="comm-row-time">${esc(commFmtTime(c.at))}</span></div>`).join("")+'</div>':'<div class="comm-empty">No calls.</div>'}`; return;
+  }
   if(state.comm==="all"){
     const texts=commMessagesForLead(l), calls=commCallsForLead(l);
-    const all=[...texts.map(x=>({...x,kind:"message"})),...calls.map(x=>({...x,kind:"call"}))].sort((a,b)=>b.at-a.at);
-    commsEl.innerHTML=`<div class="comm-panel-head"><b>Recent</b><span>${esc(l.name)}</span></div><div class="comm-list">${all.map(x=>x.kind==="call"?`<div class="comm-row call-row"><span class="comm-call-icon ${x.dir}">${x.dir==="out"?"↗":"↙"}</span><span class="comm-row-main"><b>${x.dir==="missed"?"Missed call":x.dir==="out"?"Outgoing call":"Incoming call"}</b><small>${esc(commPhone(x.number))}</small></span><span class="comm-row-time">${esc(commFmtTime(x.at))}</span></div>`:`<button class="comm-row" type="button" data-thread="${esc(x.number)}" data-channel="${x.channel}">${commAvatar(x.number)}<span class="comm-row-main"><b>${x.channel==="wa"?"WhatsApp":COMM_DATA.imessageNumbers.has(x.number)?"iMessage":"SMS"}</b><small>${esc(commPhone(x.number))}</small><span>${esc(x.text)}</span></span><span class="comm-row-time">${esc(commFmtTime(x.at))}</span></button>`).join("")||'<div class="comm-empty">No recent communications.</div>'}</div>`; return;
+    const mails=typeof mail!=="undefined"?mail.recent().filter(m=>!m.leadId||String(m.leadId)===String(l.id)):[];
+    const all=[...texts.map(x=>({...x,kind:"message"})),...calls.map(x=>({...x,kind:"call"})),...mails.map(x=>({...x,kind:"email"}))].sort((a,b)=>b.at-a.at);
+    commsEl.innerHTML=`<div class="comm-panel-head"><b>Recent</b><span>${esc(l.name)}</span></div><div class="comm-list">${all.map(x=>x.kind==="email"?`<button class="comm-row" type="button" data-open-comm-email="${esc(x.id)}"><span class="comm-call-icon">✉</span><span class="comm-row-main"><b>${esc(x.name||"Email")}</b><small>Email · ${esc(x.peer||x.account||"")}</small><span>${esc(x.subject||"")}</span></span><span class="comm-row-time">${esc(commFmtTime(x.at))}</span></button>`:x.kind==="call"?`<div class="comm-row call-row"><span class="comm-call-icon ${x.dir}">${x.dir==="out"?"↗":"↙"}</span><span class="comm-row-main"><b>${x.dir==="missed"?"Missed call":x.dir==="out"?"Outgoing call":"Incoming call"}</b><small>${esc(commPhone(x.number))}</small></span><span class="comm-row-time">${esc(commFmtTime(x.at))}</span></div>`:`<button class="comm-row" type="button" data-thread="${esc(x.number)}" data-channel="${x.channel}">${commAvatar(x.number)}<span class="comm-row-main"><b>${x.channel==="wa"?"WhatsApp":COMM_DATA.imessageNumbers.has(x.number)?"iMessage":"SMS"}</b><small>${esc(commPhone(x.number))}</small><span>${esc(x.text)}</span></span><span class="comm-row-time">${esc(commFmtTime(x.at))}</span></button>`).join("")||'<div class="comm-empty">No recent communications.</div>'}</div>`; return;
   }
   const channel=state.messageChannel||"text";
   $("#box").placeholder=channel==="wa"?"Message":"iMessage";
@@ -229,7 +234,10 @@ document.addEventListener("click", (e) => {
   if (row) { LeadRules.select(row.dataset.id); render(); return; }
   const comm = e.target.closest("[data-comm]");
   if (comm) { state.comm=comm.dataset.comm; state.threadNumber=""; renderComms(); return; }
-  const channelBtn=e.target.closest("[data-msg-channel]");
+  if(e.target.closest("#commContactsBtn")){ state.comm="people"; state.threadNumber=""; renderComms(); return; }
+  const callFilter=e.target.closest("[data-call-filter]"); if(callFilter){ state.callFilter=callFilter.dataset.callFilter; renderComms(); return; }
+  const emailRow=e.target.closest("[data-open-comm-email]"); if(emailRow&&typeof mail!=="undefined"){ state.comm="mail"; renderComms(); mail.openThread(emailRow.dataset.openCommEmail); return; }
+    const channelBtn=e.target.closest("[data-msg-channel]");
   if(channelBtn){ state.messageChannel=channelBtn.dataset.msgChannel; state.threadNumber=""; renderComms(); return; }
   const threadBtn=e.target.closest("[data-thread]");
   if(threadBtn){ state.messageChannel=threadBtn.dataset.channel; state.threadNumber=threadBtn.dataset.thread; COMM_DATA.messages.forEach(m=>{if(m.number===state.threadNumber&&m.channel===state.messageChannel)m.unread=false;}); renderComms(); return; }
