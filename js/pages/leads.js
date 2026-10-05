@@ -137,6 +137,14 @@ function commFmtDay(at) { const d=new Date(at), now=new Date(); return d.toDateS
 function commPhone(n) { const d=String(n||"").replace(/\D/g,""); return d.length===10 ? `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}` : n; }
 function commLeadForNumber(n) { return LeadRules.byNumber(n); }
 function commName(n) { const x=commLeadForNumber(n); return x ? x.name : commPhone(n); }
+function commAvatar(n) {
+  const x=commLeadForNumber(n), i=x ? Math.max(0,leads.findIndex(l=>l.id===x.id)) : 0;
+  return `<span class="av c${(i%5)+1} comm-lead-av">${esc(initials(x?.name||commPhone(n)))}</span>`;
+}
+function commContactActions(n, channel="text") {
+  const x=commLeadForNumber(n), email=x?.emails?.[0]?.[1]||"";
+  return `<span class="comm-actions"><button type="button" data-contact-action="message" data-number="${esc(n)}" aria-label="Message">⌁</button><button type="button" data-contact-action="call" data-number="${esc(n)}" aria-label="Call">⌕</button><button type="button" data-contact-action="wa" data-number="${esc(n)}" aria-label="WhatsApp">W</button>${email?`<button type="button" data-contact-action="email" data-email="${esc(email)}" aria-label="Email">✉</button>`:""}</span>`;
+}
 function commMessagesForLead(l, channel) { return COMM_DATA.messages.filter(m => LeadRules.byNumber(m.number)?.id === l.id && (!channel || m.channel===channel)); }
 function commCallsForLead(l) { return COMM_DATA.calls.filter(c => LeadRules.byNumber(c.number)?.id === l.id); }
 function receipt(m, service) {
@@ -161,7 +169,7 @@ function threadListHtml(l, channel) {
   return '<div class="comm-list">'+[...groups.values()].sort((a,b)=>b.at-a.at).map(m=>{
     const unread=rows.some(x=>x.number===m.number&&x.unread);
     const service=channel==="wa"?"WhatsApp":COMM_DATA.imessageNumbers.has(m.number)?"iMessage":"SMS";
-    return `<button class="comm-row" type="button" data-thread="${esc(m.number)}" data-channel="${channel}"><span class="comm-avatar">${esc(initials(commName(m.number)))}</span><span class="comm-row-main"><b>${esc(commName(m.number))}</b><small>${service} · ${esc(commPhone(m.number))}</small><span>${esc(m.text)}</span></span><span class="comm-row-time">${esc(commFmtTime(m.at))}${unread?'<i></i>':""}</span></button>`;
+    return `<button class="comm-row" type="button" data-thread="${esc(m.number)}" data-channel="${channel}">${commAvatar(m.number)}<span class="comm-row-main"><b>${esc(commName(m.number))}</b><small>${service} · ${esc(commPhone(m.number))}</small><span>${esc(m.text)}</span></span><span class="comm-row-time">${esc(commFmtTime(m.at))}${unread?'<i></i>':""}</span></button>`;
   }).join("")+'</div>';
 }
 function callListHtml(l) {
@@ -175,18 +183,23 @@ function renderComms() {
   document.querySelectorAll("#commTabs button").forEach(b=>b.classList.toggle("on",b.dataset.comm===state.comm));
   const composer=$("#composer");
   if(composer) composer.classList.toggle("hidden",state.comm==="people"||state.comm==="calls"||state.comm==="all");
-  if(state.comm==="mail"){ $("#box").placeholder="Email"; commsEl.innerHTML=`<div class="comm-panel-head"><b>Email</b><span>${esc(l.name)}</span></div><div class="comm-empty">Email history remains connected to the full Email page.</div>`; return; }
-  if(state.comm==="people"){ commsEl.innerHTML=`<div class="comm-panel-head"><b>Contacts</b><span>${esc(l.company)}</span></div><div class="thread">${(l.people||[]).map(p=>`<div class="contact-line"><div class="lab">${esc(p[0])}</div><div class="val">${esc(p[1])}${p[2]?"<div class='tiny'>"+esc(p[2])+"</div>":""}</div></div>`).join("")||'<div class="comm-empty">No people yet.</div>'}</div>`; return; }
+  if(state.comm==="mail"){
+    if(composer) composer.classList.add("hidden");
+    commsEl.innerHTML=`<div class="comm-panel-head email-comm-head"><b>Email</b><span>${esc(l.name)}</span></div><div id="commEmailHost" class="comm-email-host"></div>`;
+    const host=document.getElementById("commEmailHost"); if(window.mail&&host) mail.mount(host,"compact");
+    return;
+  }
+  if(state.comm==="people"){ commsEl.innerHTML=`<div class="comm-panel-head"><b>Contacts</b><span>${esc(l.company)}</span></div><div class="comm-contacts">${(l.people||[]).map((p,i)=>{const n=(l.phones||[])[i]?.[2]||(l.phones||[])[0]?.[2]||"";return `<div class="comm-contact-card"><span class="av c${(Math.max(0,leads.findIndex(x=>x.id===l.id))%5)+1}">${esc(initials(p[1]))}</span><span class="comm-contact-main"><b>${esc(p[1])}</b><small>${esc(p[0])}</small><span class="num-detail">${esc(p[2]||commPhone(n))}</span></span>${n?commContactActions(n):""}</div>`;}).join("")||'<div class="comm-empty">No people yet.</div>'}</div>`; return; }
   if(state.comm==="calls"){ commsEl.innerHTML=`<div class="comm-panel-head"><b>Calls</b><span>${esc(l.name)}</span></div>${callListHtml(l)}`; return; }
   if(state.comm==="all"){
     const texts=commMessagesForLead(l), calls=commCallsForLead(l);
     const all=[...texts.map(x=>({...x,kind:"message"})),...calls.map(x=>({...x,kind:"call"}))].sort((a,b)=>b.at-a.at);
-    commsEl.innerHTML=`<div class="comm-panel-head"><b>Recent</b><span>${esc(l.name)}</span></div><div class="comm-list">${all.map(x=>x.kind==="call"?`<div class="comm-row call-row"><span class="comm-call-icon ${x.dir}">${x.dir==="out"?"↗":"↙"}</span><span class="comm-row-main"><b>${x.dir==="missed"?"Missed call":x.dir==="out"?"Outgoing call":"Incoming call"}</b><small>${esc(commPhone(x.number))}</small></span><span class="comm-row-time">${esc(commFmtTime(x.at))}</span></div>`:`<button class="comm-row" type="button" data-thread="${esc(x.number)}" data-channel="${x.channel}"><span class="comm-avatar">${esc(initials(commName(x.number)))}</span><span class="comm-row-main"><b>${x.channel==="wa"?"WhatsApp":COMM_DATA.imessageNumbers.has(x.number)?"iMessage":"SMS"}</b><small>${esc(commPhone(x.number))}</small><span>${esc(x.text)}</span></span><span class="comm-row-time">${esc(commFmtTime(x.at))}</span></button>`).join("")||'<div class="comm-empty">No recent communications.</div>'}</div>`; return;
+    commsEl.innerHTML=`<div class="comm-panel-head"><b>Recent</b><span>${esc(l.name)}</span></div><div class="comm-list">${all.map(x=>x.kind==="call"?`<div class="comm-row call-row"><span class="comm-call-icon ${x.dir}">${x.dir==="out"?"↗":"↙"}</span><span class="comm-row-main"><b>${x.dir==="missed"?"Missed call":x.dir==="out"?"Outgoing call":"Incoming call"}</b><small>${esc(commPhone(x.number))}</small></span><span class="comm-row-time">${esc(commFmtTime(x.at))}</span></div>`:`<button class="comm-row" type="button" data-thread="${esc(x.number)}" data-channel="${x.channel}">${commAvatar(x.number)}<span class="comm-row-main"><b>${x.channel==="wa"?"WhatsApp":COMM_DATA.imessageNumbers.has(x.number)?"iMessage":"SMS"}</b><small>${esc(commPhone(x.number))}</small><span>${esc(x.text)}</span></span><span class="comm-row-time">${esc(commFmtTime(x.at))}</span></button>`).join("")||'<div class="comm-empty">No recent communications.</div>'}</div>`; return;
   }
   const channel=state.messageChannel||"text";
   $("#box").placeholder=channel==="wa"?"Message":"iMessage";
   if(state.threadNumber){
-    commsEl.innerHTML=`<div class="comm-thread-head ${channel==="wa"?"wa":""}"><button type="button" data-thread-back aria-label="Back">‹</button><div><b>${esc(commName(state.threadNumber))}</b><span>${channel==="wa"?"WhatsApp":COMM_DATA.imessageNumbers.has(state.threadNumber)?"iMessage":"SMS"} · ${esc(commPhone(state.threadNumber))}</span></div></div>${threadHtml(l,channel)}`;
+    commsEl.innerHTML=`<div class="comm-thread-head ${channel==="wa"?"wa":""}"><button type="button" data-thread-back aria-label="Back">‹</button>${commAvatar(state.threadNumber)}<div class="comm-thread-who"><b>${esc(commName(state.threadNumber))}</b><span>${channel==="wa"?"WhatsApp":COMM_DATA.imessageNumbers.has(state.threadNumber)?"iMessage":"SMS"} · <span class="num-detail">${esc(commPhone(state.threadNumber))}</span></span></div>${commContactActions(state.threadNumber,channel)}</div>${threadHtml(l,channel)}`;
   } else {
     commsEl.innerHTML=`<div class="comm-channel-switch"><button type="button" data-msg-channel="text" class="${channel==="text"?"on":""}">Messages</button><button type="button" data-msg-channel="wa" class="${channel==="wa"?"on":""}">WhatsApp</button></div>${threadListHtml(l,channel)}`;
   }
@@ -221,6 +234,13 @@ document.addEventListener("click", (e) => {
   const threadBtn=e.target.closest("[data-thread]");
   if(threadBtn){ state.messageChannel=threadBtn.dataset.channel; state.threadNumber=threadBtn.dataset.thread; COMM_DATA.messages.forEach(m=>{if(m.number===state.threadNumber&&m.channel===state.messageChannel)m.unread=false;}); renderComms(); return; }
   if(e.target.closest("[data-thread-back]")){ state.threadNumber=""; renderComms(); return; }
+  const contactAction=e.target.closest("[data-contact-action]");
+  if(contactAction){
+    const action=contactAction.dataset.contactAction, number=contactAction.dataset.number||"";
+    if(action==="message"||action==="wa"){ state.comm="messages"; state.messageChannel=action==="wa"?"wa":"text"; state.threadNumber=number; renderComms(); return; }
+    if(action==="call"){ const x=LeadRules.byNumber(number); if(x){ LeadRules.perform("call",x.id,number); toast("Call added to activity"); } return; }
+    if(action==="email"){ state.comm="mail"; renderComms(); return; }
+  }
   if (e.target.closest("#attachBtn")) { $("#file").click(); return; }
 });
 
