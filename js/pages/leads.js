@@ -70,7 +70,7 @@ function detailIcon(path) {
 }
 function renderDetail() {
   const l = lead();
-  const phoneFacts = (l.phones || []).slice(0, 2).map((p, i) => `<div class="detail-fact"><div class="detail-label">${i === 0 ? "Mobile" : "Landline"}</div><a class="detail-value num-detail" href="tel:${esc(String(p[1]).replace(/[^\d+]/g, ""))}">${esc(p[1])}</a></div>`).join("");
+  const phoneFacts = (l.phones || []).map((p) => `<div class="detail-fact"><div class="detail-label">${esc(p[0] || "Phone")}</div><a class="detail-value num-detail" href="tel:${esc(String(p[2] || p[1]).replace(/[^\\d+]/g, ""))}">${esc(p[1])}</a></div>`).join("");
   const emailFacts = (l.emails || []).map((e) => `<div class="detail-fact"><div class="detail-label">Email</div><a class="detail-value" style="font-weight:400" href="mailto:${esc(e[1])}">${esc(e[1])}</a></div>`).join("");
   const activity = (l.history || []).slice(0, 4).map((h) => ["", h.subject + (h.preview ? " — " + h.preview : ""), h.date]);
   const bankRows = statementRows(l).map(r => `<tr><td>${esc(r[0])}</td><td class="num-detail">${esc(r[1])}</td><td class="num-detail">${esc(r[2])}</td></tr>`).join("");
