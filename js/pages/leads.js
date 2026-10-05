@@ -2,6 +2,45 @@ const listEl = $("#list");
 const commsEl = $("#commsBody");
 function lead() { return leads.find((l) => l.id === state.id) || leads[0]; }
 function initials(name) { return name.split(" ").filter(Boolean).slice(0, 2).map((p) => p[0]).join("").toUpperCase(); }
+function money(value) { return Number.isFinite(Number(value)) ? "$" + Math.round(Number(value)).toLocaleString("en-US") : ""; }
+function yearsSince(dateText) {
+  if (!dateText) return "";
+  const then = new Date(dateText + "T00:00:00");
+  if (Number.isNaN(then.getTime())) return "";
+  const now = new Date();
+  let years = now.getFullYear() - then.getFullYear();
+  if (now < new Date(now.getFullYear(), then.getMonth(), then.getDate())) years--;
+  return years;
+}
+function fmtDate(dateText) {
+  if (!dateText) return "";
+  const d = new Date(dateText + "T00:00:00");
+  return Number.isNaN(d.getTime()) ? String(dateText) : d.toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+}
+function statementRows(l) {
+  const b = l.bank;
+  if (!b) return [];
+  const count = Math.max(1, Math.min(Number(b.months) || 1, 6));
+  const now = new Date();
+  const rows = [];
+  for (let i = 0; i < count; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - 1 - i, 1);
+    const vary = (k) => 0.85 + 0.3 * (((Number(l.id) * 97 + i * 31 + k * 17) % 100) / 100);
+    rows.push([
+      d.toLocaleDateString("en-US", { month:"short" }).toUpperCase(),
+      money(Math.round(b.deposits * vary(1) / 100) * 100),
+      money(Math.round(b.balance * vary(2) / 100) * 100)
+    ]);
+  }
+  return rows;
+}
+function buildSummary(l) {
+  const b = l.bank;
+  if (!b) return "No bank statements on file yet, so there is nothing to summarize.";
+  const load = b.deposits ? Math.round((Number(b.obligations || 0) / Number(b.deposits)) * 100) : 0;
+  const nsf = Number(b.nsf || 0);
+  return `Deposits average about ${money(Math.round(Number(b.deposits || 0) / 1000) * 1000)} a month. Loan payments take about ${load}% of deposits, ${load < 25 ? "so there is room for new funding" : "so the monthly load is already heavy"}. ${nsf === 0 ? "There are no NSF fees in the recent statements." : `There ${nsf === 1 ? "is 1 NSF fee" : "are " + nsf + " NSF fees"} in the recent statements, so cash flow gets tight at times.`}`;
+}
 
 function visible() {
   const q = state.q.trim().toLowerCase();
@@ -33,28 +72,27 @@ function renderDetail() {
   const l = lead();
   const phoneFacts = (l.phones || []).slice(0, 2).map((p, i) => `<div class="detail-fact"><div class="detail-label">${i === 0 ? "Mobile" : "Landline"}</div><a class="detail-value num-detail" href="tel:${esc(String(p[1]).replace(/[^\d+]/g, ""))}">${esc(p[1])}</a></div>`).join("");
   const emailFacts = (l.emails || []).map((e) => `<div class="detail-fact"><div class="detail-label">Email</div><a class="detail-value" style="font-weight:400" href="mailto:${esc(e[1])}">${esc(e[1])}</a></div>`).join("");
-  const activity = [...(l.sms || []), ...(l.mail || []), ...(l.calls || [])].slice(-3).reverse();
-  const summaryParts = [];
-  if (l.company) summaryParts.push(`${l.company}${l.industry ? " operates in " + l.industry.toLowerCase() : ""}.`);
-  if (l.deposits) summaryParts.push(`Recent deposits are ${l.deposits}${l.position ? ", with a " + l.position + " position noted" : ""}.`);
-  if (l.use) summaryParts.push(`Funding purpose: ${l.use}.`);
-  const bankRows = (l.statements || []).map(r => `<tr><td>${esc(r[0])}</td><td class="num-detail">${esc(r[1])}</td><td class="num-detail">${esc(r[2])}</td></tr>`).join("");
+  const activity = (l.history || []).slice(0, 4).map((h) => ["", h.subject + (h.preview ? " — " + h.preview : ""), h.date]);
+  const bankRows = statementRows(l).map(r => `<tr><td>${esc(r[0])}</td><td class="num-detail">${esc(r[1])}</td><td class="num-detail">${esc(r[2])}</td></tr>`).join("");
   const profile = [
     l.dba ? detailFact("DBA", l.dba) : "",
     detailFact("EIN", l.ein || "", true),
+    detailFact("Birth date", l.dob ? `${fmtDate(l.dob)} · age ${yearsSince(l.dob)}` : ""),
     detailFact("SSN", l.ssn || "", true),
-    detailFact("Start date", l.opened || "", true),
-    detailFact("Industry", String(l.industry || "").split("·")[0].trim()),
-    detailFact("Applied", l.applied || "", true)
+    detailFact("Start date", l.started ? `${fmtDate(l.started)} · ${yearsSince(l.started)} yrs` : "", true),
+    detailFact("Industry", l.industry || ""),
+    detailFact("Applied", fmtDate(l.applied), true),
+    l.address2 ? detailFact("Address 2", l.address2) : "",
+    l.address3 ? detailFact("Address 3", l.address3) : ""
   ].join("");
   const bankFacts = [
-    detailFact("Bank", l.bankName || ""),
-    detailFact("Account #", l.account || "", true)
+    detailFact("Bank", l.bank?.name || l.bankName || ""),
+    detailFact("Account #", l.bank?.account || l.account || "", true)
   ].join("");
   $("#desk").innerHTML = `<div class="detail-shell">
     <div class="detail-head">
-      <div class="detail-name">${esc(l.company)}</div>
-      <div class="detail-sub"><span>${esc(l.name)}</span><svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>${l.address ? `<span>${esc(l.address)}</span>` : `<span>${esc(l.city || "")}</span>`}</div>
+      <div class="detail-name">${esc(l.legal || l.company)}</div>
+      <div class="detail-sub"><span>${esc(l.name)}</span><span>${esc(l.stage || "")}</span><svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>${l.address ? `<span>${esc(l.address)}</span>` : `<span>${esc(l.city || "")}</span>`}</div>
     </div>
     <div class="detail-body">
       <div class="detail-pair profile-pair">
@@ -74,7 +112,7 @@ function renderDetail() {
       </section>
       <section class="detail-section detail-full">
         <div class="detail-title">${detailIcon("M4 19V9M10 19V5M16 19v-7M22 19V3")}<span>Executive Summary</span></div>
-        <p class="summary">${esc(summaryParts.join(" ") || "No financial summary available yet.")}</p>
+        <p class="summary">${esc(buildSummary(l))}</p>
       </section>
       <section class="detail-section detail-full">
         <div class="detail-title">${detailIcon("M12 8v4l3 2M21 12a9 9 0 1 1-9-9")}<span>Activity Stream</span></div>
