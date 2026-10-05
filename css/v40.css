@@ -147,6 +147,14 @@ svg { display: block; }
 .notes-area { width:100%; min-height:82px; resize:vertical; border:1px solid #E5E8EB; border-radius:8px; background:#FAFBFC; padding:10px 11px; color:#46515A; font-size:12px; line-height:1.45; outline:none; }
 .notes-area:focus { border-color:#C8CED4; background:#fff; }
 .detail-full { margin-top:2px; }
+.bank-facts .detail-fact:first-child .detail-value { font-weight:400; }
+.notes-toggle { width:calc(100% - 16px); border:0; background:transparent; text-align:left; cursor:pointer; }
+.notes-chevron { margin-left:auto; font-size:14px; line-height:1; color:#7B858E; transition:transform .15s ease; }
+.notes-toggle[aria-expanded="true"] .notes-chevron { transform:rotate(180deg); }
+.notes-content[hidden] { display:none; }
+.notes-actions { display:flex; justify-content:flex-end; margin-top:8px; }
+.notes-save { height:30px; padding:0 12px; font-size:12px; }
+.detail-full { width:100%; }
 .detail-empty { color:#A0A7AD; font-size:11px; }
 
 .rail-head, .dock-head {
