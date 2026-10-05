@@ -34,14 +34,11 @@ jobs:
           if [ -f .bundle/final.complete ] && ls .bundle/final.part* >/dev/null 2>&1; then
             cat .bundle/final.part* | base64 -d > /tmp/crm-final.zip
             cp /tmp/crm-final.zip dist/CRM.V40.EMAIL.MOBILE.REPAIRED.zip
-            rm -rf css js mock-data README.txt index.html
+            rm -rf css js mock-data README.txt index.html CRM.V40.EMAIL.MOBILE.REPAIRED.SINGLE.html quick-view.html
             unzip -oq /tmp/crm-final.zip -d .
-            changed=1
-          fi
-
-          if [ -f .bundle/single.complete ] && ls .bundle/single.part* >/dev/null 2>&1; then
-            cat .bundle/single.part* | base64 -d > CRM.V40.EMAIL.MOBILE.REPAIRED.SINGLE.html
-            cp CRM.V40.EMAIL.MOBILE.REPAIRED.SINGLE.html quick-view.html
+            if [ -f CRM.V40.EMAIL.MOBILE.REPAIRED.SINGLE.html ]; then
+              cp CRM.V40.EMAIL.MOBILE.REPAIRED.SINGLE.html quick-view.html
+            fi
             changed=1
           fi
 
