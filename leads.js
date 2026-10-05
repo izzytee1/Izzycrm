@@ -1,122 +1,192 @@
-const leads = [
-  {
-    id: "ns", revenue: "$186,000", amount: 186000, timestamp: "12m ago", age: 12, name: "Elena Voss", title: "Owner / CEO", company: "Northstar Catering Co.", dba: "Northstar",
-    city: "Manhattan, NY", stage: "In review", score: 78, fico: 672, ssn: "123-45-4412", biz: 81, star: true, mine: true, due: "Today 2:00 PM",
-    hue: 226, phones: [["Mobile", "(917) 555-0142"], ["Office", "(212) 555-0188"], ["Main", "(212) 555-0160"]],
-    emails: [["Work", "elena@northstarcatering.com"], ["Ops", "ops@northstarcatering.com"]],
-    entity: "NY S-Corp", ein: "82-4419441", industry: "Catering", opened: "2019", applied: "2026-09-12", employees: "34",
-    site: "northstarcatering.com", address: "412 W 37th St, New York, NY 10018", source: "ISO · Harbor Point",
-    deposits: "$186,420", balance: "$41,280", ask: "$150,000", offer: "$125,000", position: "2nd",
-    bankName: "Chase", account: "441944190812", routing: "021000021",
-    use: "LIC kitchen equipment + opening float", file: "FG-NS-1844", owner: "Cole Brennan",
-    notes: "Landlord deposit due Monday. Walk the term sheet at 2.",
-    statements: [["JAN", "$171,200", "$36,440"], ["FEB", "$179,880", "$39,120"], ["MAR", "$186,420", "$41,280"]],
-    people: [["Owner", "Elena Voss", "(917) 555-0142"], ["GM", "David Kim", "(917) 555-0194"], ["Bookkeeper", "Priya Nair", "(347) 555-0110"]],
-    sms: [
-      ["in", "Cole — Priya uploaded August last night. The $880 NSF was a Sysco double-draft, reversed same day.", "Thu 7:21 PM"],
-      ["out", "Got it. Numbers look clean. I’ll have a term sheet tomorrow.", "Thu 7:36 PM"],
-      ["in", "Any word? Landlord wants the remaining deposit Monday.", "Yesterday 5:02 PM"],
-      ["out", "Term sheet is in your inbox. $125k second position. Call you at 2 tomorrow to walk it.", "Yesterday 5:11 PM"]
-    ],
-    mail: [["out", "Term sheet · $125,000 second position.", "Yesterday 5:11 PM", "elena@northstarcatering.com"]],
-    calls: [["out", "Scheduled walkthrough", "Today 2:00 PM", "(917) 555-0142"], ["miss", "Missed call", "Thu 6:40 PM", "(917) 555-0142"]]
-  },
-  {
-    id: "hl", revenue: "$142,000", amount: 142000, timestamp: "28m ago", age: 28, name: "Marcus Chen", title: "Owner", company: "Harborline Logistics", dba: "Harborline",
-    city: "Newark, NJ", stage: "Qualified", ssn: "145-28-2281", ein: "22-1902190", opened: "2016", applied: "2026-09-18", industry: "Freight · 14 trucks",
-    address: "88 Ferry St, Newark, NJ 07105", source: "Referral · Sam Ortiz", deposits: "$138,400", balance: "$22,110", position: "1st",
-    bankName: "Bank of America", account: "902144018833", routing: "021200339", use: "Two used box trucks", file: "FG-HL-1902", owner: "Cole Brennan",
-    notes: "Wife Lina is on the operating account. Ask for both IDs.",
-    statements: [["JAN", "$129,600", "$18,440"], ["FEB", "$138,400", "$22,110"]],
-    phones: [["Mobile", "(862) 555-0190"], ["Office", "(973) 555-0144"]],
-    emails: [["Work", "marcus@harborlinelogistics.com"]],
-    people: [["Owner", "Marcus Chen", "(862) 555-0190"], ["Co-owner", "Lina Chen", "(862) 555-0191"]],
-    sms: [["out", "Got the January and February statements. Calling at 3:30.", "28m ago"]],
-    mail: [["in", "Opened the document request.", "28m ago", "marcus@harborlinelogistics.com"]],
-    calls: [["no", "No answer", "Today 11:10 AM", "(973) 555-0144"]]
-  },
-  {
-    id: "bd", revenue: "$221,000", amount: 221000, timestamp: "41m ago", age: 41, name: "Dr. Priya Shah", title: "Owner", company: "Brightwell Dental Group", dba: "Brightwell Dental",
-    city: "White Plains, NY", stage: "Approved", ssn: "062-77-7730", ein: "13-1760440", opened: "2014", applied: "2026-09-02", industry: "Dental · 3 chairs",
-    address: "14 Maple Ave, White Plains, NY 10601", source: "ISO · Northline", deposits: "$214,800", balance: "$60,340", position: "1st",
-    bankName: "Citibank", account: "176044019204", routing: "021000089", use: "Scanner and build-out", file: "FG-BD-1760", owner: "Sam Ortiz",
-    notes: "Approved at $160,000. Waiting on the landlord estoppel.",
-    statements: [["JAN", "$208,100", "$54,220"], ["FEB", "$211,400", "$57,900"], ["MAR", "$214,800", "$60,340"]],
-    phones: [["Mobile", "(914) 555-0104"], ["Office", "(914) 555-0177"]],
-    emails: [["Work", "priya@brightwelldental.com"]],
-    people: [["Owner", "Dr. Priya Shah", "(914) 555-0104"], ["Office manager", "Helen Cho", "(914) 555-0177"]],
-    sms: [["in", "August file is uploaded.", "41m ago"]],
-    mail: [["out", "Approval letter · $160,000.", "Today 9:15 AM", "priya@brightwelldental.com"]],
-    calls: [["out", "Reviewed the approval", "Today 9:40 AM", "(914) 555-0104"]]
-  },
-  {
-    id: "ro", revenue: "$97,000", amount: 97000, timestamp: "1h ago", age: 60, name: "Dominic Ruiz", title: "Owner", company: "Red Oak Auto Body", dba: "Red Oak",
-    city: "Queens, NY", stage: "Contacted", ssn: "091-18-1184", ein: "11-1881442", opened: "2012", applied: "2026-09-20", industry: "Auto body · 1 shop",
-    address: "41-18 Northern Blvd, Queens, NY 11101", source: "Web form", deposits: "$96,200", balance: "$8,440", position: "2nd",
-    bankName: "TD Bank", account: "188144209771", routing: "026013673", use: "Paint booth", file: "FG-RO-1881", owner: "Sam Ortiz",
-    notes: "February statement failed scan. Ask Dominic to resend it.",
-    statements: [["JAN", "$91,400", "$7,220"], ["MAR", "$96,200", "$8,440"]],
-    phones: [["Mobile", "(718) 555-0133"], ["Office", "(718) 555-0162"]],
-    emails: [["Work", "dominic@redoakautobody.com"]],
-    people: [["Owner", "Dominic Ruiz", "(718) 555-0133"]],
-    sms: [["out", "Need a clean February statement.", "1h ago"]],
-    mail: [["out", "Document request sent.", "1h ago", "dominic@redoakautobody.com"]],
-    calls: [["miss", "Missed call", "Today 11:00 AM", "(718) 555-0133"], ["no", "No answer", "Yesterday 4:12 PM", "(718) 555-0162"]]
-  },
-  {
-    id: "lu", revenue: "$84,000", amount: 84000, timestamp: "2h ago", age: 120, name: "Sable Whitaker", title: "Owner", company: "Lumen & Co. Interiors", dba: "Lumen",
-    city: "Brooklyn, NY", stage: "New", ssn: "134-65-6504", ein: "46-2011448", opened: "2021", applied: "2026-09-28", industry: "Interiors · studio",
-    address: "220 Franklin St, Brooklyn, NY 11222", source: "ISO · Harbor Point", deposits: "$79,200", balance: "$9,800", position: "1st",
-    bankName: "TD Bank", account: "201144880315", routing: "026013673", use: "Showroom inventory", file: "FG-LU-2011", owner: "Sam Ortiz",
-    notes: "March statement needs OCR. No mobile on the application.",
-    statements: [["FEB", "$74,600", "$8,120"], ["MAR", "$79,200", "$9,800"]],
-    phones: [["Office", "(718) 555-0166"]],
-    emails: [["Work", "sable@lumeninteriors.com"]],
-    people: [["Owner", "Sable Whitaker", "(718) 555-0166"]],
-    sms: [],
-    mail: [["out", "Intro and document list.", "2h ago", "sable@lumeninteriors.com"]],
-    calls: [["no", "No answer", "2h ago", "(718) 555-0166"]]
-  },
-  {
-    id: "mw", revenue: "$163,000", amount: 163000, timestamp: "3h ago", age: 180, name: "Tess Marlowe", title: "Owner", company: "Marlowe Wine Bar", dba: "Marlowe",
-    city: "New York, NY", stage: "In review", ssn: "078-33-3340", ein: "13-1664409", opened: "2018", applied: "2026-09-11", industry: "Bar · 1 location",
-    address: "18 Grove St, New York, NY 10014", source: "Walk-in", deposits: "$158,900", balance: "$27,450", position: "2nd",
-    bankName: "Chase", account: "166440912208", routing: "021000021", use: "Winter inventory", file: "FG-MW-1664", owner: "Cole Brennan",
-    notes: "SMS follow-up tomorrow at 9:30.",
-    statements: [["JAN", "$149,200", "$24,100"], ["FEB", "$158,900", "$27,450"]],
-    phones: [["Mobile", "(917) 555-0181"], ["Office", "(212) 555-0199"]],
-    emails: [["Work", "tess@marlowewinebar.com"]],
-    people: [["Owner", "Tess Marlowe", "(917) 555-0181"], ["Bar manager", "Owen Platt", "(917) 555-0182"]],
-    sms: [["out", "Sending the second-position outline tomorrow.", "3h ago"]],
-    mail: [["in", "Opened the outline.", "3h ago", "tess@marlowewinebar.com"]],
-    calls: [["out", "Confirmed tomorrow SMS", "3h ago", "(917) 555-0181"]]
-  },
-  {
-    id: "kp", revenue: "$205,000", amount: 205000, timestamp: "4h ago", age: 240, name: "Rahul Mehta", title: "Owner", company: "Keystone Pharmacy", dba: "Keystone",
-    city: "Jersey City, NJ", stage: "Funded", ssn: "151-90-9094", ein: "22-1540881", opened: "2011", applied: "2026-08-22", industry: "Pharmacy · 2 stores",
-    address: "510 Newark Ave, Jersey City, NJ 07306", source: "Renewal", deposits: "$205,600", balance: "$48,900", position: "1st",
-    bankName: "Valley Bank", account: "154088144902", routing: "021201383", use: "Inventory replenishment", file: "FG-KP-1540", owner: "Cole Brennan",
-    notes: "Funded last Thursday. First debit starts Monday.",
-    statements: [["JAN", "$198,400", "$44,200"], ["FEB", "$205,600", "$48,900"]],
-    phones: [["Mobile", "(201) 555-0148"], ["Office", "(201) 555-0170"]],
-    emails: [["Work", "rahul@keystonepharmacy.com"]],
-    people: [["Owner", "Rahul Mehta", "(201) 555-0148"], ["Bookkeeper", "Anita Desai", "(201) 555-0174"]],
-    sms: [["out", "Funding wired. Debit starts Monday.", "4h ago"]],
-    mail: [["out", "Funded confirmation · $150,000.", "4h ago", "rahul@keystonepharmacy.com"]],
-    calls: [["out", "Confirmed wire receipt", "4h ago", "(201) 555-0148"]]
-  },
-  {
-    id: "ap", revenue: "$118,000", amount: 118000, timestamp: "5h ago", age: 300, name: "Jonah Hale", title: "Owner", company: "Atlas Peak HVAC", dba: "Atlas Peak",
-    city: "Yonkers, NY", stage: "Contacted", ssn: "066-55-5528", ein: "14-1933440", opened: "2015", applied: "2026-09-25", industry: "HVAC · 8 techs",
-    address: "77 Main St, Yonkers, NY 10701", source: "ISO · Northline", deposits: "$117,300", balance: "$15,640", position: "1st",
-    bankName: "M&T Bank", account: "193344018660", routing: "022000046", use: "Two service vans", file: "FG-AP-1933", owner: "Sam Ortiz",
-    notes: "Follow-up set. Seasonal deposits dip in April.",
-    statements: [["JAN", "$121,800", "$16,200"], ["FEB", "$117,300", "$15,640"]],
-    phones: [["Mobile", "(914) 555-0120"], ["Office", "(914) 555-0155"]],
-    emails: [["Work", "jonah@atlaspeakhvac.com"]],
-    people: [["Owner", "Jonah Hale", "(914) 555-0120"]],
-    sms: [["out", "Can you send March tomorrow?", "5h ago"]],
-    mail: [["out", "Application received.", "5h ago", "jonah@atlaspeakhvac.com"]],
-    calls: [["miss", "Missed call", "5h ago", "(914) 555-0120"]]
+const listEl = $("#list");
+const commsEl = $("#commsBody");
+function lead() { return leads.find((l) => l.id === state.id) || leads[0]; }
+function initials(name) { return name.split(" ").filter(Boolean).slice(0, 2).map((p) => p[0]).join("").toUpperCase(); }
+
+function visible() {
+  const q = state.q.trim().toLowerCase();
+  return leads.filter((l) => {
+    if (!q) return true;
+    return [l.name, l.company, l.city, ...(l.phones || []).map((p) => p[1])].join(" ").toLowerCase().includes(q);
+  });
+}
+function renderList() {
+  const rows = visible();
+  $("#leadCount").textContent = String(rows.length);
+  listEl.innerHTML = rows.map((l, i) => `
+    <button class="lead-row${l.id === state.id ? " on" : ""}" data-id="${l.id}">
+      <span class="av c${(i % 5) + 1}">${initials(l.name)}</span>
+      <span class="co">${esc(l.company)}</span>
+      <span class="rev num">${esc(l.revenue || "")}</span>
+      <span class="meta">${esc(l.name)}</span>
+      <span class="tiny when">${esc(l.timestamp || "")}</span>
+    </button>`).join("") || `<div class="section empty">No leads match.</div>`;
+}
+function detailFact(label, value, numeric = false) {
+  const shown = value == null ? "" : String(value);
+  return `<div class="detail-fact"><div class="detail-label">${esc(label)}</div><div class="detail-value${numeric ? " num-detail" : ""}">${esc(shown)}</div></div>`;
+}
+function detailIcon(path) {
+  return `<svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${path}"></path></svg>`;
+}
+function renderDetail() {
+  const l = lead();
+  const phoneFacts = (l.phones || []).slice(0, 2).map((p, i) => `<div class="detail-fact"><div class="detail-label">${i === 0 ? "Mobile" : "Landline"}</div><a class="detail-value num-detail" href="tel:${esc(String(p[1]).replace(/[^\d+]/g, ""))}">${esc(p[1])}</a></div>`).join("");
+  const emailFacts = (l.emails || []).map((e) => `<div class="detail-fact"><div class="detail-label">Email</div><a class="detail-value" style="font-weight:400" href="mailto:${esc(e[1])}">${esc(e[1])}</a></div>`).join("");
+  const activity = [...(l.sms || []), ...(l.mail || []), ...(l.calls || [])].slice(-3).reverse();
+  const summaryParts = [];
+  if (l.company) summaryParts.push(`${l.company}${l.industry ? " operates in " + l.industry.toLowerCase() : ""}.`);
+  if (l.deposits) summaryParts.push(`Recent deposits are ${l.deposits}${l.position ? ", with a " + l.position + " position noted" : ""}.`);
+  if (l.use) summaryParts.push(`Funding purpose: ${l.use}.`);
+  const bankRows = (l.statements || []).map(r => `<tr><td>${esc(r[0])}</td><td class="num-detail">${esc(r[1])}</td><td class="num-detail">${esc(r[2])}</td></tr>`).join("");
+  const profile = [
+    l.dba ? detailFact("DBA", l.dba) : "",
+    detailFact("EIN", l.ein || "", true),
+    detailFact("SSN", l.ssn || "", true),
+    detailFact("Start date", l.opened || "", true),
+    detailFact("Industry", String(l.industry || "").split("·")[0].trim()),
+    detailFact("Applied", l.applied || "", true)
+  ].join("");
+  const bankFacts = [
+    detailFact("Bank", l.bankName || ""),
+    detailFact("Account #", l.account || "", true)
+  ].join("");
+  $("#desk").innerHTML = `<div class="detail-shell">
+    <div class="detail-head">
+      <div class="detail-name">${esc(l.company)}</div>
+      <div class="detail-sub"><span>${esc(l.name)}</span><svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>${l.address ? `<span>${esc(l.address)}</span>` : `<span>${esc(l.city || "")}</span>`}</div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-pair profile-pair">
+        <section class="detail-section">
+          <div class="detail-title">${detailIcon("M4 20V10l8-6 8 6v10M9 20v-6h6v6")}<span>Company Profile</span></div>
+          <div class="detail-facts">${profile}</div>
+        </section>
+        <section class="detail-section">
+          <div class="detail-title">${detailIcon("M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87")}<span>Direct Contacts</span></div>
+          <div class="detail-contact">${phoneFacts}${emailFacts || (!phoneFacts ? `<div class="detail-empty">No direct contacts on file.</div>` : "")}</div>
+        </section>
+      </div>
+      <div class="detail-pair">
+        <section class="detail-section">
+          <div class="detail-title">${detailIcon("M3 10h18M5 10V7l7-4 7 4v3M5 10v9M9 10v9M15 10v9M19 10v9M3 19h18")}<span>Banking &amp; Cash Flow</span></div>
+          <div class="detail-facts">${bankFacts}</div>
+          ${bankRows ? `<table class="stmt-table"><thead><tr><th>Month</th><th>Deposits</th><th>Balance</th></tr></thead><tbody>${bankRows}</tbody></table>` : `<div class="detail-empty" style="margin-top:12px">No bank statements on file.</div>`}
+        </section>
+        <section class="detail-section">
+          <div class="detail-title">${detailIcon("M12 8v4l3 2M21 12a9 9 0 1 1-9-9")}<span>Activity Stream</span></div>
+          <div class="activity-list">${activity.length ? activity.map(a => `<div class="activity-item"><div class="activity-time">${esc(a[2] || "")}</div><div class="activity-text">${esc(a[1] || "")}</div></div>`).join("") : `<div class="detail-empty">No activity yet.</div>`}</div>
+        </section>
+      </div>
+           <div class="detail-pair">
+      <section class="detail-section">
+        <div class="detail-title">${detailIcon("M4 19V9M10 19V5M16 19v-7M22 19V3")}<span>Executive Summary</span></div>
+        <p class="summary">${esc(summaryParts.join(" ") || "No financial summary available yet.")}</p>
+      </section>
+      <section class="detail-section">
+        <div class="detail-title">${detailIcon("M4 4h16v16H4zM8 9h8M8 13h8M8 17h5")}<span>Notes & Directives</span></div>
+        <textarea class="notes-area" data-note-id="${esc(l.id)}" placeholder="Add a note…">${esc(l.notes || "")}</textarea>
+      </section>
+      </div>
+    </div>
+  </div>`;
+}
+function renderComms() {
+  const l = lead();
+  const who = $("#dockWho"); if (who) who.textContent = l.name;
+  document.querySelectorAll("#commTabs button").forEach((b) => b.classList.toggle("on", b.dataset.comm === state.comm));
+  const composer = $("#composer");
+  if (composer) composer.classList.toggle("hidden", state.comm === "people");
+  $("#box").placeholder = state.comm === "mail" ? "Email" : state.comm === "calls" ? "Log a call" : "Message";
+  if (state.comm === "people") {
+    commsEl.innerHTML = `<div class="thread">${(l.people || []).map((p) => `<div class="contact-line"><div class="lab">${esc(p[0])}</div><div class="val">${esc(p[1])}${p[2] ? "<div class='tiny'>" + esc(p[2]) + "</div>" : ""}</div></div>`).join("") || `<div class="empty">No people yet.</div>`}</div>`;
+    return;
   }
-];
+  const channel = state.comm === "mail" ? "Email" : state.comm === "calls" ? "Call" : "SMS";
+  const items = l[state.comm] || [];
+  commsEl.innerHTML = `<div class="thread">${items.map((m) => {
+    const kind = m[0] === "miss" ? "Missed" : m[0] === "no" ? "No answer" : m[0] === "out" ? "Out" : "In";
+    const phone = m[3] ? " · " + esc(m[3]) : "";
+    return `<div class="bubble ${m[0] === "out" ? "out" : "in"}${m[0] === "miss" || m[0] === "no" ? " miss" : ""}"><span class="ch">${channel} · ${kind}</span><div>${esc(m[1])}</div><div class="t">${esc(m[2] || "")}${phone}</div></div>`;
+  }).join("") || `<div class="empty">Nothing here yet.</div>`}</div>`;
+  commsEl.scrollTop = commsEl.scrollHeight;
+}
+function render() { renderList(); renderDetail(); renderComms(); }
+
+
+document.addEventListener("input", (e) => {
+  if (e.target.matches(".notes-area")) { const l = leads.find(x => x.id === e.target.dataset.noteId); if (l) l.notes = e.target.value; }
+});
+
+document.addEventListener("click", (e) => {
+  const row = e.target.closest(".lead-row");
+  if (row) { state.id = row.dataset.id; render(); return; }
+  const comm = e.target.closest("[data-comm]");
+  if (comm) { state.comm = comm.dataset.comm; renderComms(); return; }
+  if (e.target.closest("#attachBtn")) { $("#file").click(); return; }
+});
+
+$("#composer").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const text = $("#box").value.trim();
+  const fileName = state.fileName;
+  if (!text && !fileName) return;
+  const l = lead();
+  const body = [text, fileName ? "Attached " + fileName : ""].filter(Boolean).join("\n");
+  const key = state.comm === "mail" ? "mail" : state.comm === "calls" ? "calls" : state.comm === "people" ? "calls" : "sms";
+  if (state.comm === "people") l.calls.push(["out", body, nowLabel()]);
+  else l[key].push(["out", body, nowLabel()]);
+  $("#box").value = "";
+  state.fileName = "";
+  $("#file").value = "";
+  if (state.comm === "people") state.comm = "calls";
+  renderComms();
+  toast("Sent");
+});
+$("#file").addEventListener("change", () => {
+  const f = $("#file").files[0];
+  state.fileName = f ? f.name : "";
+  if (f) toast("Attached " + f.name);
+});
+
+$("#q").addEventListener("input", (e) => {
+  state.q = e.target.value;
+  if (state.view === "scanner") reorderRows();
+  else renderList();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+    e.preventDefault(); $("#q").focus();
+  }
+});
+
+$("#newLead").addEventListener("click", () => {
+  $("#overlay").classList.remove("hidden");
+  $("#overlay").innerHTML = `<form class="sheet" id="leadForm">
+    <h2>New lead</h2>
+    <label>Name</label><input name="name" required>
+    <label>Company</label><input name="company" required>
+    <label>City</label><input name="city">
+    <label>Phone</label><input name="phone">
+    <div class="actions"><button class="btn" type="button" id="cancelLead">Cancel</button><button class="btn primary" type="submit">Save</button></div>
+  </form>`;
+});
+$("#overlay").addEventListener("click", (e) => { if (e.target.id === "overlay" || e.target.id === "cancelLead") $("#overlay").classList.add("hidden"); });
+$("#overlay").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const name = String(f.get("name")).trim();
+  const id = "n" + Date.now();
+  leads.unshift({
+    id, revenue: "", timestamp: "", name, title: "", company: String(f.get("company")).trim(), city: String(f.get("city") || "").trim(),
+    stage: "New", score: 0, star: false, mine: true, due: "", phones: f.get("phone") ? [["Mobile", String(f.get("phone")).trim()]] : [],
+    emails: [], people: [["Owner", name, String(f.get("phone") || "")]],
+    sms: [], mail: [], calls: [], owner: "Cole Brennan", file: "FG-" + id.slice(-4).toUpperCase(),
+    source: "", deposits: "", ask: "", offer: "", position: "", fico: "", use: ""
+  });
+  state.id = id;
+  $("#overlay").classList.add("hidden");
+  render();
+  toast("Lead saved");
+});
+
